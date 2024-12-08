@@ -24,6 +24,9 @@ export default function NavBar() {
         <li>
           <Link href="/fixtures">Fixtures</Link>
         </li>
+        <li>
+          <Link href="/favorites">Favorites</Link>
+        </li>
       </ul>
     </nav>
   );
