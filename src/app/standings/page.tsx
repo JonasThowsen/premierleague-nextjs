@@ -1,5 +1,5 @@
 import NavBar from "@/components/NavBar";
-import { StandingsResponse } from "@/types/football";
+import { StandingsResponse } from "@/types/standing";
 
 export default async function Standings() {
   try {
