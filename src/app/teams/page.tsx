@@ -1,66 +1,83 @@
-import NavBar from "@/components/NavBar";
-import { TeamsResponse } from "@/types/teams";
+"use client";
 
-export default async function Standings() {
-  try {
-    const response = await fetch("https://api.football-data.org/v4/teams/", {
+import { useEffect, useState } from "react";
+import NavBar from "@/components/NavBar";
+import { TeamsResponse, Team } from "@/types/team";
+import { useTeamPreferences } from "@/hooks/useTeamPreferences";
+
+async function getTeams() {
+  const response = await fetch(
+    "https://api.football-data.org/v4/competitions/PL/teams",
+    {
       headers: {
         "X-Auth-Token": "9b71f705c2a14ffbb9c8c3806d531bcf",
       },
-    });
+    },
+  );
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+  return response.json();
+}
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
+export default function Teams() {
+  const [teams, setTeams] = useState<Team[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const { preferences, toggleFavorite, updateCustomName } =
+    useTeamPreferences();
 
-    const data: TeamsResponse = await response.json();
+  // Fetch teams on component mount
+  useEffect(() => {
+    getTeams()
+      .then((data: TeamsResponse) => setTeams(data.teams))
+      .catch((err) => setError(err.message));
+  }, []);
 
-    return (
-      <div>
-        <NavBar />
-        <div className="p-4">
-          <h1 className="text-2xl font-bold mb-4">
-            {data.competition.name} Standings
-          </h1>
-          <table className="w-full">
-            <thead>
-              <tr className="border-b-2">
-                <th className="text-left">Position</th>
-                <th className="text-left">Team</th>
-                <th className="text-right">Played</th>
-                <th className="text-right">Won</th>
-                <th className="text-right">Draw</th>
-                <th className="text-right">Lost</th>
-                <th className="text-right">GF</th>
-                <th className="text-right">GA</th>
-                <th className="text-right">GD</th>
-                <th className="text-right">Points</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.standings[0].table.map((team) => (
-                <tr key={team.team.id} className="border-b">
-                  <td className="py-2">{team.position}</td>
-                  <td>{team.team.name}</td>
-                  <td className="text-right">{team.playedGames}</td>
-                  <td className="text-right">{team.won}</td>
-                  <td className="text-right">{team.draw}</td>
-                  <td className="text-right">{team.lost}</td>
-                  <td className="text-right">{team.goalsFor}</td>
-                  <td className="text-right">{team.goalsAgainst}</td>
-                  <td className="text-right">{team.goalDifference}</td>
-                  <td className="text-right font-bold">{team.points}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+  if (error) return <div>Error: {error}</div>;
+
+  return (
+    <div>
+      <NavBar />
+      <div className="p-4">
+        <h1 className="text-2xl font-bold mb-4">Premier League Teams</h1>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {teams.map((team) => (
+            <div key={team.id} className="border p-4 rounded-lg">
+              <div className="flex items-center justify-between mb-2">
+                <img
+                  src={team.crest}
+                  alt={`${team.name} crest`}
+                  className="w-12 h-12 object-contain"
+                />
+                <button
+                  onClick={() => toggleFavorite(team.id)}
+                  className={`px-3 py-1 rounded ${
+                    preferences[team.id]?.favorite
+                      ? "bg-yellow-400 text-black"
+                      : "bg-gray-200"
+                  }`}
+                >
+                  {preferences[team.id]?.favorite ? "★" : "☆"}
+                </button>
+              </div>
+
+              <div className="mt-2">
+                <input
+                  type="text"
+                  value={preferences[team.id]?.customName || team.name}
+                  onChange={(e) => updateCustomName(team.id, e.target.value)}
+                  className="w-full px-2 py-1 border rounded"
+                />
+              </div>
+
+              <div className="mt-2 text-sm text-gray-600">
+                <p>Founded: {team.founded}</p>
+                <p>Venue: {team.venue}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
-    );
-  } catch (error) {
-    if (error instanceof Error) {
-      return <div>Error fetching data: {error.message}</div>;
-    }
-    return <div>An unknown error occurred</div>;
-  }
+    </div>
+  );
 }
