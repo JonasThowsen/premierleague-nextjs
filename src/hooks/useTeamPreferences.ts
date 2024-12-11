@@ -5,7 +5,6 @@ export function useTeamPreferences() {
   const [preferences, setPreferences] = useState<TeamPreferencesMap>({});
 
   useEffect(() => {
-    // Load preferences from localStorage on mount
     const stored = localStorage.getItem("teamPreferences");
     if (stored) {
       setPreferences(JSON.parse(stored));
