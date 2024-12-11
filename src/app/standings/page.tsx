@@ -7,7 +7,7 @@ export default async function Standings() {
       "https://api.football-data.org/v4/competitions/PL/standings",
       {
         headers: {
-          "X-Auth-Token": "9b71f705c2a14ffbb9c8c3806d531bcf",
+          "X-Auth-Token": process.env.FOOTBALL_API_KEY || "",
         },
       },
     );
