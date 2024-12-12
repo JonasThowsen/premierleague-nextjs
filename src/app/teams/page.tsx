@@ -1,5 +1,4 @@
 import NavBar from "@/components/NavBar";
-
 import TeamList from "./TeamList";
 import TeamCard from "@/components/TeamCard";
 
