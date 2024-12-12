@@ -36,22 +36,18 @@ This Premier League application allows you to track your favorite teams and view
 
 3. User Preferences:
    - All favorites and custom names are saved locally in your browser
-   - These preferences persist between sessions
-   - Changes are reflected immediately across all pages
 
 ### Page Structure
 
-- **Home Page**: Displays your favorite teams for quick access
+- **Home Page**: Shows the Premier League standings
 - **Teams Page**: Shows all Premier League teams with options to:
   - Star teams as favorites
   - Customize team names
   - View team details
 - **Fixtures Page**: Lists upcoming and past matches
-- **Standings Page**: Shows current league standings with your custom team names
 
 ### Technical Implementation
 
 - Built with Next.js and TypeScript
 - Uses client-side storage for user preferences
 - Fetches real-time data from the football-data.org API
-- Responsive design that works on both desktop and mobile
