@@ -2,72 +2,69 @@
 
 import { useState, useEffect } from "react";
 
+interface TeamPreference {
+  favorite: boolean;
+  customName?: string;
+}
+
 export function useTeamPreferences() {
   const [preferences, setPreferences] = useState<
-    Record<
-      number,
-      {
-        favorite: boolean;
-        customName?: string;
-      }
-    >
+    Record<number, TeamPreference>
   >({});
 
+  // Load preferences when component mounts
   useEffect(() => {
-    // Load both preferences and team names
     const storedPrefs = JSON.parse(
       localStorage.getItem("teamPreferences") || "{}",
     );
-    const storedNames = JSON.parse(localStorage.getItem("teamNames") || "{}");
-
-    // Merge stored names into preferences
-    const mergedPrefs = { ...storedPrefs };
-    Object.entries(storedNames).forEach(([id, name]) => {
-      const numId = Number(id);
-      mergedPrefs[numId] = {
-        ...mergedPrefs[numId],
-        customName: name as string,
-      };
-    });
-
-    setPreferences(mergedPrefs);
+    setPreferences(storedPrefs);
   }, []);
 
-  const updateCustomName = (teamId: number, name: string) => {
-    // Update preferences
-    setPreferences((prev) => ({
-      ...prev,
-      [teamId]: {
-        ...prev[teamId],
-        customName: name,
-      },
-    }));
+  const toggleFavorite = (teamId: number) => {
+    // Use callback form of setState to ensure we have latest state
+    setPreferences((prev) => {
+      // Create new preferences object
+      const newPrefs = {
+        ...prev,
+        [teamId]: {
+          ...prev[teamId],
+          favorite: !prev[teamId]?.favorite,
+        },
+      };
 
-    // Update teamNames for TeamName component
-    const storedNames = JSON.parse(localStorage.getItem("teamNames") || "{}");
-    storedNames[teamId] = name;
-    localStorage.setItem("teamNames", JSON.stringify(storedNames));
+      // Save to localStorage
+      localStorage.setItem("teamPreferences", JSON.stringify(newPrefs));
 
-    // Save preferences
-    localStorage.setItem("teamPreferences", JSON.stringify(preferences));
+      // Log for debugging
+      console.log("Toggling favorite for team:", teamId);
+      console.log("New preferences:", newPrefs);
 
-    // Dispatch storage event for other components
-    window.dispatchEvent(
-      new StorageEvent("storage", {
-        key: "teamNames",
-        newValue: JSON.stringify(storedNames),
-      }),
-    );
+      return newPrefs;
+    });
   };
 
-  const toggleFavorite = (teamId: number) => {
-    setPreferences((prev) => ({
-      ...prev,
-      [teamId]: {
-        ...prev[teamId],
-        favorite: !prev[teamId]?.favorite,
-      },
-    }));
+  const updateCustomName = (teamId: number, name: string) => {
+    setPreferences((prev) => {
+      const newPrefs = {
+        ...prev,
+        [teamId]: {
+          ...prev[teamId],
+          customName: name,
+        },
+      };
+
+      // Save both preferences and team names
+      localStorage.setItem("teamPreferences", JSON.stringify(newPrefs));
+      localStorage.setItem(
+        "teamNames",
+        JSON.stringify({
+          ...JSON.parse(localStorage.getItem("teamNames") || "{}"),
+          [teamId]: name,
+        }),
+      );
+
+      return newPrefs;
+    });
   };
 
   return { preferences, toggleFavorite, updateCustomName };
