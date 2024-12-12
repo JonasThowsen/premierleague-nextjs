@@ -18,9 +18,6 @@ export default function NavBar() {
       </div>
       <ul className="flex space-x-4">
         <li>
-          <Link href="/standings">Standings</Link>
-        </li>
-        <li>
           <Link href="/fixtures">Fixtures</Link>
         </li>
         <li>
