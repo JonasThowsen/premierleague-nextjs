@@ -1,5 +1,4 @@
 "use client";
-
 import { useState, useEffect } from "react";
 
 interface TeamPreference {
@@ -12,59 +11,58 @@ export function useTeamPreferences() {
     Record<number, TeamPreference>
   >({});
 
-  // Load preferences when component mounts
   useEffect(() => {
     const storedPrefs = JSON.parse(
       localStorage.getItem("teamPreferences") || "{}",
     );
+    console.log("Initial load preferences:", storedPrefs);
     setPreferences(storedPrefs);
   }, []);
 
   const toggleFavorite = (teamId: number) => {
-    // Use callback form of setState to ensure we have latest state
-    setPreferences((prev) => {
-      // Create new preferences object
-      const newPrefs = {
-        ...prev,
-        [teamId]: {
-          ...prev[teamId],
-          favorite: !prev[teamId]?.favorite,
-        },
-      };
+    const currentStoredPrefs = JSON.parse(
+      localStorage.getItem("teamPreferences") || "{}",
+    );
+    console.log("Current stored prefs before toggle:", currentStoredPrefs);
 
-      // Save to localStorage
-      localStorage.setItem("teamPreferences", JSON.stringify(newPrefs));
+    const newPrefs = {
+      ...currentStoredPrefs,
+      [teamId]: {
+        ...currentStoredPrefs[teamId],
+        favorite: !currentStoredPrefs[teamId]?.favorite,
+      },
+    };
 
-      // Log for debugging
-      console.log("Toggling favorite for team:", teamId);
-      console.log("New preferences:", newPrefs);
+    console.log("New prefs after toggle:", newPrefs);
 
-      return newPrefs;
-    });
+    localStorage.setItem("teamPreferences", JSON.stringify(newPrefs));
+
+    setPreferences(newPrefs);
   };
 
   const updateCustomName = (teamId: number, name: string) => {
-    setPreferences((prev) => {
-      const newPrefs = {
-        ...prev,
-        [teamId]: {
-          ...prev[teamId],
-          customName: name,
-        },
-      };
+    const currentStoredPrefs = JSON.parse(
+      localStorage.getItem("teamPreferences") || "{}",
+    );
 
-      // Save both preferences and team names
-      localStorage.setItem("teamPreferences", JSON.stringify(newPrefs));
-      localStorage.setItem(
-        "teamNames",
-        JSON.stringify({
-          ...JSON.parse(localStorage.getItem("teamNames") || "{}"),
-          [teamId]: name,
-        }),
-      );
+    const newPrefs = {
+      ...currentStoredPrefs,
+      [teamId]: {
+        ...currentStoredPrefs[teamId],
+        customName: name,
+      },
+    };
 
-      return newPrefs;
-    });
+    localStorage.setItem("teamPreferences", JSON.stringify(newPrefs));
+    localStorage.setItem(
+      "teamNames",
+      JSON.stringify({
+        ...JSON.parse(localStorage.getItem("teamNames") || "{}"),
+        [teamId]: name,
+      }),
+    );
+
+    setPreferences(newPrefs);
   };
 
   return { preferences, toggleFavorite, updateCustomName };
