@@ -1,3 +1,4 @@
+import { TeamName } from "@/components/TeamName";
 import NavBar from "@/components/NavBar";
 import { MatchesResponse } from "@/types/fixtures";
 
@@ -38,13 +39,19 @@ export default async function Fixtures() {
                 <td className="py-2">
                   {new Date(match.utcDate).toLocaleDateString()}
                 </td>
-                <td className="py-2">{match.homeTeam.name}</td>
+                <TeamName
+                  teamId={match.homeTeam.id}
+                  originalName={match.homeTeam.name}
+                />
                 <td>
                   {match.status === "FINISHED"
                     ? `${match.score.fullTime.home} - ${match.score.fullTime.away}`
                     : "vs"}
                 </td>
-                <td className="py-2">{match.awayTeam.name}</td>
+                <TeamName
+                  teamId={match.awayTeam.id}
+                  originalName={match.awayTeam.name}
+                />
                 <td className="text-right">{match.status}</td>
               </tr>
             ))}

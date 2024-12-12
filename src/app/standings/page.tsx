@@ -1,5 +1,6 @@
 import NavBar from "@/components/NavBar";
 import { StandingsResponse } from "@/types/standing";
+import { TeamName } from "@/components/TeamName";
 
 export default async function Standings() {
   try {
@@ -44,7 +45,10 @@ export default async function Standings() {
               {data.standings[0].table.map((team) => (
                 <tr key={team.team.id} className="border-b">
                   <td className="py-2">{team.position}</td>
-                  <td>{team.team.name}</td>
+                  <TeamName
+                    teamId={team.team.id}
+                    originalName={team.team.name}
+                  />
                   <td className="text-right">{team.playedGames}</td>
                   <td className="text-right">{team.won}</td>
                   <td className="text-right">{team.draw}</td>
