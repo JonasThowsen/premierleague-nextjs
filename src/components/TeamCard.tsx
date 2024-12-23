@@ -2,6 +2,7 @@
 
 import { Team } from "@/types/team";
 import { useTeamPreferences } from "@/hooks/useTeamPreferences";
+import Image from "next/image";
 
 interface TeamCardProps {
   team: Team;
@@ -14,7 +15,7 @@ export default function TeamCard({ team }: TeamCardProps) {
   return (
     <div className="border p-4 rounded-lg">
       <div className="flex items-center justify-between mb-2">
-        <img
+        <Image
           src={team.crest}
           alt={`${team.name} crest`}
           className="w-12 h-12 object-contain"
