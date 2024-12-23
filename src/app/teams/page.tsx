@@ -9,12 +9,17 @@ async function getTeams() {
       headers: {
         "X-Auth-Token": process.env.FOOTBALL_API_KEY || "",
       },
+      next: {
+        revalidate: 3600, // Revalidate every hour
+      },
     },
   );
+
   if (!response.ok) {
     throw new Error(`Failed to fetch teams`);
   }
-  const data: TeamsResponse = await response.json();
+
+  const data = (await response.json()) as TeamsResponse;
   return data.teams;
 }
 
