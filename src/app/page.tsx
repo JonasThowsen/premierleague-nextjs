@@ -10,6 +10,9 @@ export default async function Page() {
         headers: {
           "X-Auth-Token": process.env.FOOTBALL_API_KEY || "",
         },
+        next: {
+          revalidate: 3600, // Cache for 1 hour
+        },
       },
     );
 

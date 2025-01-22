@@ -18,6 +18,8 @@ export default function TeamCard({ team }: TeamCardProps) {
         <Image
           src={team.crest}
           alt={`${team.name} crest`}
+          width={48}
+          height={48}
           className="w-12 h-12 object-contain"
         />
         <button
