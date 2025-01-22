@@ -8,6 +8,7 @@ export default async function Page() {
       "https://api.football-data.org/v4/competitions/PL/standings",
       {
         headers: {
+          // go to the website to get your own API key
           "X-Auth-Token": process.env.FOOTBALL_API_KEY || "",
         },
         next: {
